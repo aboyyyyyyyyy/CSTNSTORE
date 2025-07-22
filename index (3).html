@@ -1,0 +1,195 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CSNT STORE</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #ff0000;
+      color: white;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background-color: #b30000;
+      padding: 1rem;
+      text-align: center;
+    }
+    header h1 {
+      margin: 0;
+    }
+    main {
+      padding: 2rem;
+    }
+    .section {
+      margin-bottom: 2rem;
+    }
+    select, button {
+      padding: 0.5rem;
+      font-size: 1rem;
+      margin-top: 0.5rem;
+      display: block;
+    }
+    .whatsapp-button {
+      background-color: white;
+      color: #ff0000;
+      border: none;
+      padding: 1rem;
+      text-align: center;
+      font-weight: bold;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      margin-top: 1rem;
+    }
+    footer {
+      background-color: #b30000;
+      text-align: center;
+      padding: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>CSNT STORE</h1>
+    <p>Jasa Joki Roblox - Murah dan Cepat!</p>
+  </header>
+
+  <main>
+    <div class="section">
+      <h2>Pilih Game</h2>
+      <select id="game" onchange="handleGameChange()">
+        <option value="Grow Garden">Grow Garden</option>
+        <option value="Car Driving Simulator (CDID)">Car Driving Simulator (CDID)</option>
+        <option value="Steal a Brainrot">Steal a Brainrot</option>
+      </select>
+    </div>
+
+    <div class="section">
+      <h2>Pilih Layanan</h2>
+      <select id="service" onchange="handleServiceChange()">
+        <option value="">-- Pilih Layanan --</option>
+        <option value="Grow Garden - Shekel">Grow Garden - Shekel</option>
+        <option value="Grow Garden - Pet">Grow Garden - Pet</option>
+        <option value="CDID - Money">CDID - Money</option>
+        <option value="CDID - Gamepass">CDID - Gamepass</option>
+        <option value="CDID - Joki">CDID - Joki</option>
+        <option value="BrainrotGod Secret">BrainrotGod Secret</option>
+      </select>
+    </div>
+
+    <div class="section" id="cdidOption" style="display: none;">
+      <h3>Pilih Jumlah Fish</h3>
+      <select id="fishAmount" onchange="updateTotal()">
+        <option value="1k Fish - 10000">1k Fish - Rp10.000</option>
+        <option value="5k Fish - 15000">5k Fish - Rp15.000</option>
+      </select>
+    </div>
+
+    <div class="section" id="petOption" style="display: none;">
+      <h3>Pilih Pet</h3>
+      <select id="pet">
+        <option>Disco Bee</option>
+        <option>Racoon</option>
+        <option>Trex</option>
+        <option>Butterfly</option>
+        <option>Chicken Zombie</option>
+        <option>Mimic Octopus</option>
+        <option>Red Fox</option>
+        <option>Moon Cat</option>
+      </select>
+    </div>
+
+    <div class="section">
+      <h2>Total Harga:</h2>
+      <p id="total">Rp0</p>
+    </div>
+
+    <button class="whatsapp-button" onclick="submitOrder()">Submit Your Order</button>
+  </main>
+
+  <script>
+    function handleServiceChange() {
+      const service = document.getElementById("service").value;
+      const cdidDiv = document.getElementById("cdidOption");
+      const petDiv = document.getElementById("petOption");
+
+      cdidDiv.style.display = (service === "CDID - Joki") ? "block" : "none";
+      petDiv.style.display = (service === "Grow Garden - Pet") ? "block" : "none";
+
+      updateTotal();
+    }
+
+    function handleGameChange() {
+      handleServiceChange();
+    }
+
+    function updateTotal() {
+      const service = document.getElementById("service").value;
+      let total = 0;
+
+      if (service === "CDID - Joki") {
+        const fish = document.getElementById("fishAmount").value;
+        if (fish.includes("10000")) total = 10000;
+        if (fish.includes("15000")) total = 15000;
+      }
+
+      if (service === "Grow Garden - Pet") {
+        const pet = document.getElementById("pet").value;
+        const petPrices = {
+          "Disco Bee": 95000,
+          "Racoon": 80000,
+          "Trex": 55000,
+          "Butterfly": 50000,
+          "Chicken Zombie": 25000,
+          "Mimic Octopus": 25000,
+          "Red Fox": 15000,
+          "Moon Cat": 5000
+        };
+        total = petPrices[pet] || 0;
+      }
+
+      document.getElementById("total").textContent = `Rp${total.toLocaleString("id-ID")}`;
+    }
+
+    function submitOrder() {
+      const game = document.getElementById("game").value;
+      const service = document.getElementById("service").value;
+      let message = `📦 PESANAN MASUK:
+Game: ${game}
+Layanan: ${service}`;
+
+      if (service === "CDID - Joki") {
+        const fish = document.getElementById("fishAmount").value;
+        message += `
+Jumlah Fish: ${fish.split(" - ")[0]}`;
+      }
+
+      if (service === "Grow Garden - Pet") {
+        const pet = document.getElementById("pet").value;
+        message += `
+Pet: ${pet}`;
+      }
+
+      const total = document.getElementById("total").textContent;
+      message += `
+Total Harga: ${total}`;
+
+      const encoded = encodeURIComponent(message);
+      const phone = "6282120401176";
+      const waLink = `https://wa.me/${phone}?text=${encoded}`;
+      window.open(waLink, "_blank");
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const petDropdown = document.getElementById("pet");
+      if (petDropdown) {
+        petDropdown.addEventListener("change", updateTotal);
+      }
+    });
+  </script>
+</body>
+</html>
